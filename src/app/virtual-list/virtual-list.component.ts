@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, computed, ElementRef, HostListener, Input, OnInit, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, computed, ElementRef, HostListener, Input, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { fromEvent, Subscription, throttleTime } from 'rxjs';
 
 @Component({
@@ -8,7 +8,7 @@ import { fromEvent, Subscription, throttleTime } from 'rxjs';
   templateUrl: './virtual-list.component.html',
   styleUrl: './virtual-list.component.scss'
 })
-export class VirtualListComponent implements OnInit, AfterViewInit {
+export class VirtualListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input() data!: Array<number>;
   @Input() height!: number;
@@ -22,21 +22,17 @@ export class VirtualListComponent implements OnInit, AfterViewInit {
     () => this.startIndex() + Math.ceil(this.height / this.itemHeight)
   )
 
-  innerHeight = computed(() => {
-    console.log('updated')
-    return this.itemHeight * this.data.length
-  });
+  innerHeight = computed(() => this.itemHeight * this.data.length);
 
 
   visiblePart: number[] = this.data?.slice(this.startIndex(), this.endIndex())
 
   setVisiblePart() {
-    // console.log(this.startIndex, this.endIndex())
     this.visiblePart = this.data?.slice(this.startIndex(), this.endIndex())
   }
 
   setIndex(event: any) {
-    this.startIndex.set(event.target.scrollTop / this.itemHeight | 0); //this.endIndex() - Math.ceil(this.height / this.itemHeight);
+    this.startIndex.set(event.target.scrollTop / this.itemHeight | 0);
     this.setVisiblePart()
     this.marginTop = this.startIndex() * this.itemHeight
   }
@@ -51,5 +47,9 @@ export class VirtualListComponent implements OnInit, AfterViewInit {
         throttleTime(250)
       )
       .subscribe((event) => this.setIndex(event))
+  }
+
+  ngOnDestroy(): void {
+    this.scroll$.unsubscribe()
   }
 }
