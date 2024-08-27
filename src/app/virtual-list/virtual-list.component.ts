@@ -14,7 +14,7 @@ export class VirtualListComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() data!: Array<number>;
   @Input() height!: number;
   @Input() itemHeight!: number;
-  @ViewChild('scrollableelement') scrollableelement!: ElementRef;
+  @ViewChild('scrollableElement') scrollableElement!: ElementRef;
 
   scroll$: Subscription = Subscription.EMPTY;
   startIndex = signal(0);
@@ -41,7 +41,7 @@ export class VirtualListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.scroll$ = fromEvent(this.scrollableelement.nativeElement, 'scroll')
+    this.scroll$ = fromEvent(this.scrollableElement.nativeElement, 'scroll')
       .pipe(
         throttleTime(250)
       )
