@@ -1,5 +1,5 @@
 <section [style.height]="height + 'px'" class="virtual-list" #scrollableelement>
-    <div [style]="{'height': innerHeight() + 'px', 'padding-top': marginTop + 'px'}">
+    <div [style]="{'height': innerHeight() + 'px', 'padding-top': marginTop() + 'px'}">
         @for(item of visiblePart; track $index) {
         <div [style]="{'height': itemHeight + 'px'}" class="virtual-list-item"> {{item}} exists</div>
         }

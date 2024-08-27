@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, computed, ElementRef, HostListener, Input, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, ElementRef, HostListener, Input, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { fromEvent, Subscription, throttleTime } from 'rxjs';
 import { ScrollEvent } from './types';
 
@@ -7,7 +7,8 @@ import { ScrollEvent } from './types';
   standalone: true,
   imports: [],
   templateUrl: './virtual-list.component.html',
-  styleUrl: './virtual-list.component.scss'
+  styleUrl: './virtual-list.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class VirtualListComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() data!: Array<number>;
@@ -17,7 +18,7 @@ export class VirtualListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   scroll$: Subscription = Subscription.EMPTY;
   startIndex = signal(0);
-  marginTop = 0;
+  marginTop = signal(0);
   endIndex = computed(
     () => this.startIndex() + Math.ceil(this.height / this.itemHeight)
   )
@@ -32,7 +33,7 @@ export class VirtualListComponent implements OnInit, AfterViewInit, OnDestroy {
   setIndex(event: ScrollEvent) {
     this.startIndex.set(event.target?.scrollTop / this.itemHeight | 0);
     this.setVisiblePart()
-    this.marginTop = this.startIndex() * this.itemHeight
+    this.marginTop.set(this.startIndex() * this.itemHeight)
   }
 
   ngOnInit(): void {
